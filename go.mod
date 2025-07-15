@@ -4,6 +4,7 @@ go 1.24.3
 
 require (
 	github.com/a-h/templ v0.3.906
+	github.com/gofiber/contrib/fiberzerolog v1.0.3
 	github.com/gofiber/fiber/v2 v2.52.8
 	github.com/golang-migrate/migrate/v4 v4.18.3
 	github.com/jmoiron/sqlx v1.4.0
@@ -14,7 +15,6 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
-	github.com/gofiber/contrib/fiberzerolog v1.0.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
