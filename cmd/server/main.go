@@ -16,11 +16,13 @@ func main() {
 	logger.Info().Msg("Загрузка конфигурации...")
 	cfg := config.GetConfig(&logger)
 	logger.Info().Msg("Конфигурация успешно загружена")
-	
+
 	// Подключаемся к БД
 	logger.Info().Msg("Подключение к БД...")
-	db := repository.GetDatabase(cfg.DatabaseURL, "migrations", &logger)
+	db := repository.GetDatabase(cfg.DatabaseURL, cfg.MigrationPath, &logger)
 	logger.Info().Msg("Подключение к БД успешно")
 	defer db.Close()
-	
+
+	//
+
 }

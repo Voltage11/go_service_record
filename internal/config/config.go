@@ -18,6 +18,7 @@ const (
 	dbPass        = "DB_PASS"
 	dbPort        = "DB_PORT"
 	dbName        = "DB_NAME"
+	migrationPath = "MIGRATION_PATH"
 )
 
 type Config struct {
@@ -26,6 +27,7 @@ type Config struct {
 	JWTSecret     string
 	JWTExpiration string
 	CSRFKey       string
+	MigrationPath string
 }
 
 func GetConfig(logger *zerolog.Logger) *Config {
@@ -68,5 +70,6 @@ func GetConfig(logger *zerolog.Logger) *Config {
 		JWTSecret:     jwtSecret,
 		JWTExpiration: jwtExpiration,
 		CSRFKey:       csrfKey,
+		MigrationPath: getRequiredEnv(migrationPath),
 	}
 }
