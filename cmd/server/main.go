@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"service-record/internal/config"
+	"service-record/internal/repository"
 
 	"github.com/rs/zerolog"
 )
@@ -16,5 +16,11 @@ func main() {
 	logger.Info().Msg("Загрузка конфигурации...")
 	cfg := config.GetConfig(&logger)
 	logger.Info().Msg("Конфигурация успешно загружена")
-	fmt.Println(cfg)
+	
+	// Подключаемся к БД
+	logger.Info().Msg("Подключение к БД...")
+	db := repository.GetDatabase(cfg.DatabaseURL, "migrations", &logger)
+	logger.Info().Msg("Подключение к БД успешно")
+	defer db.Close()
+	
 }
