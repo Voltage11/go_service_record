@@ -2,10 +2,11 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
-	"github.com/rs/zerolog"
 )
 
 const (
@@ -19,6 +20,7 @@ const (
 	dbPort        = "DB_PORT"
 	dbName        = "DB_NAME"
 	migrationPath = "MIGRATION_PATH"
+	logLevel      = "LOG_LEVEL"
 )
 
 type Config struct {
@@ -28,18 +30,19 @@ type Config struct {
 	JWTExpiration string
 	CSRFKey       string
 	MigrationPath string
+	LogLevel      int
 }
 
-func GetConfig(logger *zerolog.Logger) *Config {
+func GetConfig() *Config {
 	err := godotenv.Load()
 	if err != nil {
-		logger.Fatal().Err(err).Msg("Ошибка загрузки env файла")
+		log.Fatal("Ошибка загрузки env файла")
 	}
 
 	getRequiredEnv := func(key string) string {
 		value := os.Getenv(key)
 		if value == "" {
-			logger.Fatal().Msgf("Отсутствует обязательная переменная окружения: %s", key)
+			log.Fatalf("Отсутствует обязательная переменная окружения: %s", key)
 		}
 		return value
 	}
@@ -64,6 +67,12 @@ func GetConfig(logger *zerolog.Logger) *Config {
 		getRequiredEnv(dbPass),
 		getRequiredEnv(dbName))
 
+	logLevelStr := getOptionalEnv(logLevel, "1")
+	logLevelInt, err := strconv.Atoi(logLevelStr)
+	if err != nil {
+		log.Fatalf("Ошибка конвертации уровня логирования: %s", logLevelStr)
+	}
+
 	return &Config{
 		ServerAddress: serverAddress,
 		DatabaseURL:   dbDsn,
@@ -71,5 +80,6 @@ func GetConfig(logger *zerolog.Logger) *Config {
 		JWTExpiration: jwtExpiration,
 		CSRFKey:       csrfKey,
 		MigrationPath: getRequiredEnv(migrationPath),
+		LogLevel: logLevelInt,
 	}
 }
