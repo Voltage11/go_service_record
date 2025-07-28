@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -14,6 +15,9 @@ type ServerConfig struct {
 
 type DbConfig struct {
 	Dsn string
+	MigrationsPath string
+	MaxOpenConns   int
+	MaxIdleConns   int
 }
 
 type SecretConfig struct {
@@ -22,7 +26,7 @@ type SecretConfig struct {
 }
 
 type LogConfig struct {
-	Level string
+	Level int
 }
 
 type Config struct {
@@ -35,13 +39,12 @@ type Config struct {
 func GetConfig() *Config {
 	loadEnv()
 	
-	postgresDsn := fmt.Sprintf("%s:%s@%s:%s/%s?sslmode=disable",
-							getRequiredEnvStr("DB_USER"),
-							getRequiredEnvStr("DB_PASS"),
+	postgresDsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 							getRequiredEnvStr("DB_HOST"),
 							getRequiredEnvStr("DB_PORT"),
+							getRequiredEnvStr("DB_USER"),
+							getRequiredEnvStr("DB_PASS"),
 							getRequiredEnvStr("DB_NAME"),)
-	
 	return &Config{
 		Server: ServerConfig{
 			ServerHost: getEnvStr("SERVER_HOST", "localhost"),
@@ -49,13 +52,16 @@ func GetConfig() *Config {
 		},
 		Db: DbConfig{
 			Dsn: postgresDsn,
-			},
+			MigrationsPath: getRequiredEnvStr("DB_MIGRATIONS_PATH"),
+			MaxOpenConns: getEnvInt("MAX_OPEN_CONNS", 5),
+			MaxIdleConns: getEnvInt("MaxIdleConns", 2),
+		},
 		Secret: SecretConfig{
 			HashKey: getRequiredEnvStr("HASH_KEY"),
 			CsrfTokenKey: getRequiredEnvStr("CSRF_TOKEN"),
 		},
 		Log: LogConfig{
-			Level: getEnvStr("LOG_LEVEL", "0"),
+			Level: getEnvInt("LOG_LEVEL", 0),
 		},
 	}
 	
@@ -86,4 +92,17 @@ func getRequiredEnvStr(key string) string {
 		panic(fmt.Sprintf("Не задан обязательный параметр %s", key))
 	}
 	return value
+}
+
+func getEnvInt(key string, defaultValue int) int {
+	valueStr := os.Getenv(key)
+	if valueStr == "" {
+		return defaultValue
+	}
+	valueInt, err := strconv.Atoi(valueStr)
+	if err != nil {
+		return defaultValue
+	}
+
+	return valueInt
 }
