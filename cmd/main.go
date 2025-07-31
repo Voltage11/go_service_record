@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"service-record/internal/apps/auth"
 	"service-record/internal/config"
 	"service-record/pkg/database"
 	"service-record/pkg/logger"
@@ -30,6 +31,9 @@ func main() {
 	app := fiber.New()
 	app.Use(recover.New())
 	app.Static("/static", "./static")
+
+	// Хандлеры
+	auth.NewAuthHandler(app, logger)
 
 	serverRun := fmt.Sprintf("%s:%s", cfg.Server.ServerHost, cfg.Server.ServerPort)
 
