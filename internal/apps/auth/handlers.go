@@ -34,3 +34,9 @@ func (h *AuthHandler) getLogout(c *fiber.Ctx) error {
 func (h *AuthHandler) getUserList(c *fiber.Ctx) error {
 	return c.SendString("Пользователи")
 }
+
+// func (h *AuthHandler) isAuth(c *fiber.Ctx) bool {
+// 	// проверим на наличие куков
+
+	
+// }

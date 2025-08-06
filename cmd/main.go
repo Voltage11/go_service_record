@@ -32,6 +32,10 @@ func main() {
 	app.Use(recover.New())
 	app.Static("/static", "./static")
 
+	// Midleware
+	authService := auth.NewAuthService(cfg.Secret.JwtToken)
+	app.Use(authService.Middleware())
+
 	// Хандлеры
 	auth.NewAuthHandler(app, logger)
 

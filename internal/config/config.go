@@ -21,8 +21,7 @@ type DbConfig struct {
 }
 
 type SecretConfig struct {
-	HashKey string
-	CsrfTokenKey string
+	JwtToken string
 }
 
 type LogConfig struct {
@@ -57,8 +56,7 @@ func GetConfig() *Config {
 			MaxIdleConns: getEnvInt("MaxIdleConns", 2),
 		},
 		Secret: SecretConfig{
-			HashKey: getRequiredEnvStr("HASH_KEY"),
-			CsrfTokenKey: getRequiredEnvStr("CSRF_TOKEN"),
+			JwtToken: getRequiredEnvStr("JWT_TOKEN"),
 		},
 		Log: LogConfig{
 			Level: getEnvInt("LOG_LEVEL", 0),
