@@ -2,6 +2,7 @@ package auth
 
 import (
 	"service-record/pkg/utils"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -53,6 +54,14 @@ func (a *AuthService) CreateJWTCookie(user *User) (*fiber.Cookie, error) {
 }
 
 func (a *AuthService) isPublicPath(path string) bool {
+	// Если url начинается на /public, то пропускаем всегда
+	partsPath := strings.Split(path, "/")
+	if len(partsPath) > 0 {
+		if partsPath[0] == "public" {
+			return true
+		}
+	}
+
 	publicPaths := map[string]bool{
 		"/auth/login": true,
 	}
