@@ -1,0 +1,23 @@
+package components
+
+
+type ButtonHrefProps struct {
+    Title string    
+    Href string
+    Id string
+    Name string 
+    StyleType ButtonStyle
+    Target TargetHref
+}
+
+templ ButtonHref(props ButtonHrefProps) {   
+    <a 
+        href={props.Href} 
+        name={props.Name} 
+        class={"btn " + string(props.StyleType)}
+        id={props.Id}
+        target={string(props.Target)}        
+    >
+        {props.Title}
+    </a>
+}

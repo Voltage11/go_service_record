@@ -1,0 +1,20 @@
+package components
+
+
+type MessageType string
+
+const (
+    MessageTypeInfo MessageType = "message-info"
+    MessageTypeError MessageType = "message-error"
+)
+
+type MessageProps struct {
+    Type MessageType
+    Message string
+}
+
+templ Message(props MessageProps) {
+    <div class={"message " + string(props.Type)}>
+        {props.Message}
+    </div>
+}

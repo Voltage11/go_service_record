@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch (with .env)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/cmd/main.go",
+            "envFile": "${workspaceFolder}/.env", // Загрузка переменных из .env
+            "args": [], // Аргументы командной строки
+            "env": {
+                "GO_ENV": "development" // Доп. переменные (переопределяют .env)
+            },
+            "cwd": "${workspaceFolder}" // Рабочая директория
+        }
+    ]
+}

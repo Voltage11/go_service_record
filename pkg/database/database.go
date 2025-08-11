@@ -52,11 +52,11 @@ func runMigrations(db *sqlx.DB, migrationsPath string, logger zerolog.Logger) er
 		return fmt.Errorf("ошибка миграции: %w", err)
 	}
 
-	defer func() {
-		if _, err := m.Close(); err != nil {
-			logger.Error().Err(err).Msg("Ошибка закрытия миграции")
-		}
-	}()
+	// defer func() {
+	// 	if _, err := m.Close(); err != nil {
+	// 		logger.Error().Err(err).Msg("Ошибка закрытия миграции")
+	// 	}
+	// }()
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("ошибка применения миграции: %w", err)

@@ -1,0 +1,96 @@
+package pages
+
+import "service-record/views/components"
+import "service-record/views/layouts"
+
+templ Auth() {
+    @layouts.Layout(layouts.LayoutProps{
+        Title: "Авторизация",
+        MetaDescription: "Запись на услуги: Авторизация",
+    }){    
+        @AuthStyle()
+
+        <div class="container">
+            <div class="container__box">
+                <div class="container__box__header">
+                    Авторизация
+                </div>
+
+                <div id="message" style="width: 100%"></div>
+                
+
+                <form 
+                    class="auth-form" 
+                    hx-ext="response-targets"
+                    hx-post="/auth/api/login"
+                    hx-trigger="submit"
+                    hx-target="#message"
+                    hx-target-error="#message"
+                    hx-swap="innerHTML"
+                >
+                    @components.Input(components.InputProps{
+                        Id: "login",
+                        Name: "login",
+                        Type: components.InputTypeText,
+                        Label: "Логин",
+                        PlaceHolder: "Введите почту",
+                        Required: true,
+                    })
+
+                    @components.Input(components.InputProps{
+                        Id: "password",
+                        Name: "password",
+                        Type: components.InputTypePassword,
+                        Label: "Пароль",
+                        PlaceHolder: "Введите пароль",
+                        Required: true,
+                    })
+                    
+                    @components.Button(components.ButtonProps{
+                        Title: "Войти",
+                        Id: "auth",
+                        Name: "auth",
+                        StyleType: components.BtnAccept,
+                        Type: components.ButtonTypeSubmit,
+                    })
+                </form>
+            </div>
+        </div>
+    }
+}
+
+templ AuthStyle() {
+    <style>
+        .container {
+            background-color: var(--dark);
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            /* Горизонтальное центрирование */
+            align-items: center;
+            /* Вертикальное центрирование */
+        }
+    
+        .container__box {
+            width: 500px;
+            
+            background: var(--white);
+            border-radius: 10px;            
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+        }
+        .container__box__header {
+            width: 100%;
+            font-size: 22px;
+            color: black;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+        }
+        .auth-form {
+
+        }
+    </style>
+}

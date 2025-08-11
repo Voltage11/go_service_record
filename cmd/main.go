@@ -26,18 +26,19 @@ func main() {
 	if err != nil {
 		logger.Fatal().Err(err).Msg("Ошибка подключения к БД")
 	}
-	defer db.Close()
 
+	defer db.Close()
+	
 	app := fiber.New()
 	app.Use(recover.New())
 	app.Static("/static", "./static")
 
 	// Midleware
-	authService := auth.NewAuthService(cfg.Secret.JwtToken)
+	authService := auth.NewAuthService(db, logger, []byte(cfg.Secret.JwtToken), cfg.Secret.HashKey)
 	app.Use(authService.Middleware())
 
 	// Хандлеры
-	auth.NewAuthHandler(app, logger)
+	auth.NewAuthHandler(app, logger, authService)
 
 	serverRun := fmt.Sprintf("%s:%s", cfg.Server.ServerHost, cfg.Server.ServerPort)
 

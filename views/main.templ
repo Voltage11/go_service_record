@@ -1,0 +1,16 @@
+package views
+
+import "service-record/views/layouts"
+
+
+templ Main() {
+    @layouts.Layout(layouts.LayoutProps{
+        Title: "Запись на услуги",
+        MetaDescription: "Запись на услуги",
+    }){
+        //@layout.Header()
+        <main>
+            { children... }
+        </main>
+    }
+}

@@ -1,0 +1,34 @@
+package components
+
+type InputType string
+
+const (
+    InputTypeText InputType = "text"
+    InputTypePassword InputType = "password"
+)
+
+type InputProps struct {
+    Id string
+    Name string
+    Type InputType
+    Label string
+    PlaceHolder string
+    Required bool
+}
+
+templ Input(props InputProps) {
+    <label 
+        for={props.Id}
+        class="form-label"
+    >
+        {props.Label}
+    </label>
+    <input 
+        type={string(props.Type)}
+        id={props.Id}
+        name={props.Name}
+        placeholder={props.PlaceHolder}
+        class="form-control"
+        required={ props.Required }
+    />
+}

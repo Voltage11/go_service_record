@@ -1,0 +1,21 @@
+package components
+
+type ButtonProps struct {
+    Title string    
+    Id string
+    Name string
+    StyleType ButtonStyle
+    Type ButtonType
+
+}
+
+templ Button(props ButtonProps) {
+    <button
+        id={props.Id}
+        name={props.Name}
+        class={"btn " + string(props.StyleType)}
+        type={string(props.Type)}
+    >
+        {props.Title}
+    </button>
+}
