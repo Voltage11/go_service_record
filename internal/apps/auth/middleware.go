@@ -27,14 +27,19 @@ type AuthService struct {
 	hashKey    string
 }
 
-func NewAuthService(db *sqlx.DB, logger *zerolog.Logger, cryptoKey []byte, hashKey string) *AuthService {
+func NewAuthService(db *sqlx.DB, logger *zerolog.Logger, cryptoKey []byte, hashKey string) (*AuthService, error) {
+	repository, err := newRepository(db, logger)
+	if err != nil {
+		return nil, err
+	}	
+	
 	return &AuthService{
 		userCrypto: newUserCrypto(cryptoKey),
 		logger:     logger,
 		cryptoKey:  cryptoKey,
-		repository: newRepository(db, logger),
+		repository: repository,
 		hashKey:    hashKey,
-	}
+	}, nil
 }
 
 func (a *AuthService) Middleware() fiber.Handler {
@@ -171,9 +176,6 @@ func (a *AuthService) authUser(c *fiber.Ctx, email, password, sessionID string) 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	// fmt.Println(utils.StrToHashWithKey("admin", a.hashKey))
-	// fmt.Println(utils.NewUUID())
-
 	// Получим пользователя по email
 	user, err := a.repository.getByEmail(ctx, email)
 	if err != nil {
@@ -186,7 +188,7 @@ func (a *AuthService) authUser(c *fiber.Ctx, email, password, sessionID string) 
 	passwordHash := utils.StrToHashWithKey(password, a.hashKey)
 
 	if user.PasswordHash != passwordHash {
-		return errors.New("Неверный пароль")
+		return errors.New("неверный пароль")
 	}
 
 	// Если все верно, то создаем куки

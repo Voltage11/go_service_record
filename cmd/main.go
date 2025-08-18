@@ -34,7 +34,10 @@ func main() {
 	app.Static("/static", "./static")
 
 	// Midleware
-	authService := auth.NewAuthService(db, logger, []byte(cfg.Secret.JwtToken), cfg.Secret.HashKey)
+	authService, err := auth.NewAuthService(db, logger, []byte(cfg.Secret.JwtToken), cfg.Secret.HashKey)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("Ошибка получения сервиса авторизации")
+	}
 	app.Use(authService.Middleware())
 
 	// Хандлеры

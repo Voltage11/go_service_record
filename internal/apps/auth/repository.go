@@ -39,17 +39,18 @@ const (
                          VALUES (:id, :user_id, :expires_at, :ip, :user_agent, :created_at)`
 )
 
-func newRepository(db *sqlx.DB, logger *zerolog.Logger) *repository {		
+func newRepository(db *sqlx.DB, logger *zerolog.Logger) (*repository, error) {		
+	if db == nil {
+		return nil, errors.New("не указан db")
+	}
+	if logger == nil {
+		return nil, errors.New("не указан logger")
+	}
+	
 	return &repository{
 		db:     db,
 		logger: logger,
-	}
-}
-
-func (r *repository) logError(err error, msg string) {
-	if r.logger != nil {
-		r.logger.Error().Err(err).Msg(msg)
-	}
+	}, nil
 }
 
 func (r *repository) getById(ctx context.Context, id string) (*User, error) {
@@ -62,11 +63,9 @@ func (r *repository) getById(ctx context.Context, id string) (*User, error) {
 	err := r.db.GetContext(ctx, user, stmtGetUserById, id)
 
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, fmt.Errorf("пользователь с id %s не найден", id)
-		}
-		r.logError(err, fmt.Sprintf("ошибка получения пользователя с id %s", id))
-		return nil, fmt.Errorf("ошибка получения пользователя")
+		errorMsg := fmt.Sprintf("ошибка получения пользователя с id %s", id)
+		r.logger.Error().Err(err).Msg(errorMsg)
+		return nil, fmt.Errorf("%s: %w", errorMsg, err)
 	}
 	
 	return user, nil
@@ -85,8 +84,9 @@ func (r *repository) getByEmail(ctx context.Context, email string) (*User, error
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("пользователь с email %s не найден", email)
 		}
-		r.logError(err, fmt.Sprintf("ошибка получения пользователя с email %s", email))
-		return nil, fmt.Errorf("ошибка получения пользователя")
+		errorMsg := fmt.Sprintf("ошибка получения пользователя с email %s", email)
+		r.logger.Error().Err(err).Msg(errorMsg)
+		return nil, fmt.Errorf(errorMsg)
 	}
 	
 	return user, nil
@@ -95,20 +95,20 @@ func (r *repository) getByEmail(ctx context.Context, email string) (*User, error
 func (r *repository) userCreate(ctx context.Context, user *User) error {
 	_, err := r.db.NamedExecContext(ctx, stmtCreateUser, user)
 	if err != nil {
-		r.logError(err, fmt.Sprintf("ошибка создания пользователя: %+v", user))
-		return errors.New("ошибка создания пользователя")
+		errorMsg := fmt.Sprintf("ошибка создания пользователя: %+v", user)
+		r.logger.Error().Err(err).Msg(errorMsg)
+		return errors.New(errorMsg)
 	}
-
 	return nil
 }
 
 func (r *repository) userUpdate(ctx context.Context, user *User) error {
 	_, err := r.db.NamedExecContext(ctx, stmtUpdateUser, user)
 	if err != nil {
-		r.logError(err, fmt.Sprintf("ошибка редактирования пользователя: %+v", user))
-		return errors.New("ошибка редактирования пользователя")
+		errorMsg := fmt.Sprintf("ошибка редактирования пользователя: %+v", user)
+		r.logger.Error().Err(err).Msg(errorMsg)
+		return errors.New(errorMsg)
 	}
-
 	return nil
 }
 
@@ -121,8 +121,9 @@ func (r *repository) getUserSessions(ctx context.Context, userId string) ([]sess
 
 	err := r.db.SelectContext(ctx, &sessions, stmtGetUserSessions, userId)
 	if err != nil {
-		r.logError(err, fmt.Sprintf("ошибка получения сессий пользователя: %s", userId))
-		return nil, errors.New("ошибка получения сессий пользователя")
+		errorMsg := fmt.Sprintf("ошибка получения сессий пользователя: %s", userId)
+		r.logger.Error().Err(err).Msg(errorMsg)
+		return nil, errors.New(errorMsg)
 	}
 
 	return sessions, nil
@@ -134,8 +135,9 @@ func (r *repository) getSessionByID(ctx context.Context, sessionId string) (*ses
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("сессия с id %s не найдена", sessionId)
 		} else {
-			r.logError(err, fmt.Sprintf("ошибка получения сессии с id %s", sessionId))
-			return nil, fmt.Errorf("ошибка получения сессии")
+			errorMsg := fmt.Sprintf("ошибка получения сессии с id %s", sessionId)
+			r.logger.Error().Err(err).Msg(errorMsg)
+			return nil, errors.New(errorMsg)
 		}
 	}
 	return session, nil
@@ -143,25 +145,27 @@ func (r *repository) getSessionByID(ctx context.Context, sessionId string) (*ses
 
 func (r *repository) createSession(ctx context.Context, session *session) error {
 	if session == nil {
-		return errors.New("не указана сессия")
-	}
+        return errors.New("не указана сессия")
+    }
 
-	sessionExist, err := r.getSessionByID(ctx, session.ID)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			_, err := r.db.NamedExecContext(ctx, stmtCreateSession, session)
-			if err != nil {
-				r.logError(err, fmt.Sprintf("ошибка создания сессии для пользователя %s", session.UserID))
-				return errors.New("ошибка создания сессии")
-			}
-		} else {
-			return err
-		}
+    existingSession, err := r.getSessionByID(ctx, session.ID)
+    if err != nil && !errors.Is(err, sql.ErrNoRows) {
+        return fmt.Errorf("ошибка проверки сессии: %w", err)
+    }
 
-	}	
-	if sessionExist.UserID != session.UserID {
-		return errors.New("пользователь не соответствует сессии")
-	}
-	
-	return nil
+    if existingSession != nil {
+        if existingSession.UserID != session.UserID {
+            return errors.New("пользователь не соответствует сессии")
+        }
+        return nil
+    }
+
+    _, err = r.db.NamedExecContext(ctx, stmtCreateSession, session)
+    if err != nil {
+        errorMsg := fmt.Sprintf("ошибка создания сессии для пользователя %s", session.UserID)
+        r.logger.Error().Err(err).Msg(errorMsg)
+        return fmt.Errorf("%s: %w", errorMsg, err)
+    }
+    
+    return nil
 }
