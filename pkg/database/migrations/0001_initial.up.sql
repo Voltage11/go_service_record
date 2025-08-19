@@ -1,6 +1,6 @@
 -- Создание таблицы пользователей
 CREATE TABLE users (
-    id VARCHAR(50) NULL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -12,8 +12,8 @@ CREATE TABLE users (
 
 -- Создание таблицы сессий
 CREATE TABLE sessions (
-    id VARCHAR(50) NOT NULL PRIMARY KEY,
-    user_id VARCHAR(50) NOT NULL,
+    id VARCHAR(50) NOT NULL UNIQUE,
+    user_id int NOT NULL,
     expires_at TIMESTAMPTZ NOT NULL,
     ip INET,
     user_agent TEXT NOT NULL,

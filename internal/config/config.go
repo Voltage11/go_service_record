@@ -23,6 +23,8 @@ type DbConfig struct {
 type SecretConfig struct {
 	JwtToken string
 	HashKey string
+	AdminEmail string
+	AdminPass string
 }
 
 type LogConfig struct {
@@ -59,6 +61,8 @@ func GetConfig() *Config {
 		Secret: SecretConfig{
 			JwtToken: getRequiredEnvStr("JWT_TOKEN"),
 			HashKey: getRequiredEnvStr("HASH_KEY"),
+			AdminEmail: getRequiredEnvStr("ADMIN_EMAIL"),
+			AdminPass: getRequiredEnvStr("ADMIN_PASS"),
 		},
 		Log: LogConfig{
 			Level: getEnvInt("LOG_LEVEL", 0),
