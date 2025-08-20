@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import "service-record/views/components"
 import "service-record/views/layouts"
 
-func Auth() templ.Component {
+func Auth(errorMessage string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -48,7 +48,20 @@ func Auth() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " <div class=\"container\"><div class=\"container__box\"><div class=\"container__box__header\">Авторизация</div><div id=\"message\" style=\"width: 100%\"></div><form class=\"auth-form\" hx-ext=\"response-targets\" hx-post=\"/auth/api/login\" hx-trigger=\"submit\" hx-target=\"#message\" hx-target-error=\"#message\" hx-swap=\"innerHTML\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, " <div class=\"container\"><div class=\"container__box\"><div class=\"container__box__header\">Авторизация</div><div id=\"message\" style=\"width: 100%\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/auth.templ`, Line: 19, Col: 67}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><form class=\"auth-form\" method=\"post\" action=\"/auth/api/login\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -84,7 +97,7 @@ func Auth() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</form></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</form></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -117,12 +130,12 @@ func AuthStyle() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<style>\r\n        .container {\r\n            background-color: var(--dark);\r\n            width: 100%;\r\n            height: 100vh;\r\n            display: flex;\r\n            justify-content: center;\r\n            /* Горизонтальное центрирование */\r\n            align-items: center;\r\n            /* Вертикальное центрирование */\r\n        }\r\n    \r\n        .container__box {\r\n            width: 500px;\r\n            \r\n            background: var(--white);\r\n            border-radius: 10px;            \r\n            display: flex;\r\n            flex-direction: column;\r\n            padding: 30px;\r\n        }\r\n        .container__box__header {\r\n            width: 100%;\r\n            font-size: 22px;\r\n            color: black;\r\n            margin-bottom: 30px;\r\n            display: flex;\r\n            justify-content: center;\r\n        }\r\n        .auth-form {\r\n\r\n        }\r\n    </style>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<style>\r\n        .container {\r\n            background-color: var(--dark);\r\n            width: 100%;\r\n            height: 100vh;\r\n            display: flex;\r\n            justify-content: center;\r\n            /* Горизонтальное центрирование */\r\n            align-items: center;\r\n            /* Вертикальное центрирование */\r\n        }\r\n    \r\n        .container__box {\r\n            width: 500px;\r\n            \r\n            background: var(--white);\r\n            border-radius: 10px;            \r\n            display: flex;\r\n            flex-direction: column;\r\n            padding: 30px;\r\n        }\r\n        .container__box__header {\r\n            width: 100%;\r\n            font-size: 22px;\r\n            color: black;\r\n            margin-bottom: 30px;\r\n            display: flex;\r\n            justify-content: center;\r\n        }\r\n        .auth-form {\r\n\r\n        }\r\n    </style>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

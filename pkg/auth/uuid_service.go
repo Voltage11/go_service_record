@@ -1,4 +1,4 @@
-package utils
+package auth
 
 import (
 	"github.com/google/uuid"
@@ -6,11 +6,11 @@ import (
 	
 )
 
-func NewUUID() string {	
+func newUUID() string {	
 	return uuid.New().String()
 }
 
-func IsValidUUID(uuidStr string) bool {
+func isValidUUID(uuidStr string) bool {
 	if len(uuidStr) != 36 { 
         return false
     }

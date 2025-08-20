@@ -3,7 +3,7 @@ package pages
 import "service-record/views/components"
 import "service-record/views/layouts"
 
-templ Auth() {
+templ Auth(errorMessage string) {
     @layouts.Layout(layouts.LayoutProps{
         Title: "Авторизация",
         MetaDescription: "Запись на услуги: Авторизация",
@@ -16,17 +16,13 @@ templ Auth() {
                     Авторизация
                 </div>
 
-                <div id="message" style="width: 100%"></div>
+                <div id="message" style="width: 100%">{errorMessage}</div>
                 
 
                 <form 
                     class="auth-form" 
-                    hx-ext="response-targets"
-                    hx-post="/auth/api/login"
-                    hx-trigger="submit"
-                    hx-target="#message"
-                    hx-target-error="#message"
-                    hx-swap="innerHTML"
+                    method="post"
+                    action="/auth/api/login"                                        
                 >
                     @components.Input(components.InputProps{
                         Id: "login",
